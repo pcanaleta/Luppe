@@ -6,7 +6,7 @@
 
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
-
+import pymongo
 
 class LuppebotPipeline:
     def process_item(self, item, spider):

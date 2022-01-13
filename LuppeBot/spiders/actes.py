@@ -2,8 +2,7 @@ import scrapy
 from itemadapter import ItemAdapter
 from scrapy.exporters import XmlItemExporter
 from scrapy.linkextractors import LinkExtractor
-from items import Actes
-
+from LuppeBot.items import Actes
 
 # scrapy crawl --nolog --output -:json gols
 # scrapy crawl gols -o Gols.csv
@@ -22,11 +21,14 @@ class ResidentialRecordsSpider(scrapy.Spider):
         #yield from response.follow_all(pagination_links, self.parse)
 
     def parse_acta(self, response):
-        def extract_with_css(query):
-            return response.css(query).get(default='').strip()
-        item = Actes()
-        yield {
-            item['titol_acte']: extract_with_css('.apex::text'),
-        }
+
+        actes = response.xpath('//*[@class="apex"]/text()')
+        for acta in actes:
+            item = Actes()
+            item['titol_acte'] = acta.extract()
+            yield item
+
+
+
         
 

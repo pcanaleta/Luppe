@@ -6,9 +6,10 @@
 import scrapy
 
 
-class LuppebotItem(scrapy.Item):
+class Actes(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
+    titol_acte = scrapy.Field()
     pass
 
 class TaulaGolsItem(scrapy.Item):

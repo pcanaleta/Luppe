@@ -65,7 +65,12 @@ ROBOTSTXT_OBEY = True
 #ITEM_PIPELINES = {
 #    'LuppeBot.pipelines.LuppebotPipeline': 300,
 #}
-
+ITEM_PIPELINES = ['stack.pipelines.MongoDBPipeLine',]
+MONGODB_SERVER = "cluster0-shard-00-01.2kn4u.mongodb.net"
+MONGODB_PORT = "27017"
+MONGODB_DB = "luppe"
+MONGODB_COLLECTION = "actes"
+#"mongodb+srv://admin:<password>@cluster0.2kn4u.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
 #AUTOTHROTTLE_ENABLED = True
