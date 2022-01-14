@@ -21,3 +21,19 @@ class TaulaGolsItem(scrapy.Item):
     partits_jugats = scrapy.Field()
     gols_partit = scrapy.Field()
     pass
+
+class Jugador(scrapy.Item):
+    numero = scrapy.Field()
+    nom = scrapy.Field()
+    cognom = scrapy.Field()
+    targetes_grogues = scrapy.Field()
+    targetes_vermelles = scrapy.Field()
+    targetes_dobles_grogues = scrapy.Field()
+    gols = scrapy.Field()
+    gols_partit = scrapy.Field()
+    equip = scrapy.Field()
+    pass
+
+class Equip (scrapy.Item):
+    nom = scrapy.Field()
+    pass

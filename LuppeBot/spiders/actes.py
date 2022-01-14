@@ -1,8 +1,9 @@
+import logging
 import scrapy
 from itemadapter import ItemAdapter
 from scrapy.exporters import XmlItemExporter
 from scrapy.linkextractors import LinkExtractor
-from LuppeBot.items import Actes
+from LuppeBot.items import Jugador, Equip
 
 # scrapy crawl --nolog --output -:json gols
 # scrapy crawl gols -o Gols.csv
@@ -21,9 +22,17 @@ class ResidentialRecordsSpider(scrapy.Spider):
         #yield from response.follow_all(pagination_links, self.parse)
 
     def parse_acta(self, response):
+        actes = response.xpath('//*[@class="col-md-12 bg-white mb-20"]')
+        blocs = response.xpath('//*[@class="col-md-4 p-0_ml"]//table')
 
-        actes = response.css('.apex::text')
-        for acta in actes:
-            item = Actes()
-            item['titol_acte'] = acta.extract()
-            yield item
+        #item = Equip()
+        #item['nom'] = blocs.xpath('//th/text()').extract()
+        #yield item
+        item = Jugador()
+        item['nom'] = actes.xpath('//*[@class="col-md-12 bg-white mb-20"]//table//tbody//tr//td//a/text()').extract()
+        yield item
+        #for acta in actes:
+        #    if response.xpath('//*[@class="col-md-4 p-0_ml"]//table//th/text()').extract() == 'Titulars':
+        #        item = Jugador()
+        #        item['nom'] = acta.xpath('//*[@class="col-md-12 bg-white mb-20"]//table//tbody//tr//td//a/text()').extract()
+        #        yield item
