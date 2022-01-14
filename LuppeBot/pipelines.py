@@ -16,16 +16,16 @@ class LuppebotPipeline(object):
         27017)
         db = connection['luppe']
         self.collection = db['actes']
-
+    
     def process_item(self, item, spider):
-        #valid = True
-        #for data in item:
-        #    if not data:
-        #        valid = False
-        #        raise DropItem("Missing {0}!".format(data))
-        #if valid:
-        #    self.collection.insert(dict(item))
-        #    logging.msg("Question added to MongoDB database!",
-        #            level=logging.DEBUG, spider=spider)
+        valid = True
+        for data in item:
+            if not data:
+                valid = False
+                raise DropItem("Missing {0}!".format(data))
+        if valid:
+            self.collection.insert_one(dict(item))
+            logging.warning("Question added to MongoDB database!",
+                    level=logging.DEBUG, spider=spider)
         self.collection.insert(dict(item))
         return item
