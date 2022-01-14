@@ -22,13 +22,8 @@ class ResidentialRecordsSpider(scrapy.Spider):
 
     def parse_acta(self, response):
 
-        actes = response.xpath('//*[@class="apex"]/text()')
+        actes = response.css('.apex::text')
         for acta in actes:
             item = Actes()
             item['titol_acte'] = acta.extract()
             yield item
-
-
-
-        
-

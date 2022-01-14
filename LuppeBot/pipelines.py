@@ -12,20 +12,23 @@ import pymongo
 
 class LuppebotPipeline(object):
     def __init__(self):
-        connection = pymongo.MongoClient('cluster0-shard-00-01.2kn4u.mongodb.net',
-        27017)
-        db = connection['luppe']
+        self.connection = pymongo.MongoClient(
+            'localhost',
+            27017
+        )
+        db = self.connection['fcf']
         self.collection = db['actes']
     
     def process_item(self, item, spider):
-        valid = True
-        for data in item:
-            if not data:
-                valid = False
-                raise DropItem("Missing {0}!".format(data))
-        if valid:
-            self.collection.insert_one(dict(item))
-            logging.warning("Question added to MongoDB database!",
-                    level=logging.DEBUG, spider=spider)
-        self.collection.insert(dict(item))
+        self.collection.insert_one(dict(item))
+        #valid = True
+        #for data in item:
+        #    if not data:
+        #        valid = False
+        #        raise DropItem("Missing {0}!".format(data))
+        #if valid:
+       #self.collection.inser
+            #self.collection.insert_one(dict(item))
+            #logging.warning("Question added to MongoDB database!",
+            #    level=logging.DEBUG, spider=spider)
         return item
