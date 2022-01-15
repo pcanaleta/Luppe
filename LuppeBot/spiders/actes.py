@@ -12,8 +12,10 @@ from LuppeBot.items import Jugador, Equip
 
 class ResidentialRecordsSpider(scrapy.Spider):
     name = 'actes'
+    categoria = {}
 
-    start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/tercera-catalana/grup-18/jornada-14']
+    start_urls = [l.strip() for l in open('listofurls.txt').readlines()]
+    #start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/tercera-catalana/grup-1/jornada-14']
 
     def parse(self, response):
         actes_page_links = response.css('td.p-5.resultats-w-resultat.tc a')
