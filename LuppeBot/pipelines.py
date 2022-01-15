@@ -9,7 +9,6 @@ from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 import logging
 import pymongo
-from sqlalchemy import true
 
 class LuppebotPipeline(object):
     def __init__(self):
@@ -22,6 +21,15 @@ class LuppebotPipeline(object):
     
     def process_item(self, item, spider):
         #Como saber si tiene nombre de jugador y nombre de equipo
-        #{nom: {$exists:true, $not: {$size:1}}} 
-        self.collection.insert_one(dict(item))
-        return item
+        #{nom: {$exists:true, $not: {$size:1}}}
+        #{$and: [ { nom: null},{equip:null}]}
+        query_existeix_jugador = {"nom": dict(item)['nom']}
+        query_es_null = {"$and":[{"nom": "null"},{"equip":"null"}]}
+        if self.collection.count_documents(query_existeix_jugador) > 0:
+            pass
+        else:
+            if item['equip'] is None:
+                pass
+            else:
+                self.collection.insert_one(dict(item))
+        

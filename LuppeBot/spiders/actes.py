@@ -29,6 +29,6 @@ class ResidentialRecordsSpider(scrapy.Spider):
     def parse_jugador(self, response):
 
         item = Jugador()
-        item['nom'] = response.xpath('//*[@class="m-0 fs-30 va-b bold"]/text()').extract()
-        item['equip'] = response.xpath('//*[@class="mt-5 fs-20 va-t darkgrey italic"]/text()').extract()
+        item['nom'] = response.xpath('//*[@class="m-0 fs-30 va-b bold"]/text()').extract_first()
+        item['equip'] = response.xpath('//*[@class="mt-5 fs-20 va-t darkgrey italic"]/text()').extract_first()
         yield item
