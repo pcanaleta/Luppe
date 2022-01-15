@@ -1,4 +1,5 @@
 import logging
+from fsspec import Callback
 import scrapy
 from itemadapter import ItemAdapter
 from scrapy.exporters import XmlItemExporter
@@ -22,17 +23,12 @@ class ResidentialRecordsSpider(scrapy.Spider):
         #yield from response.follow_all(pagination_links, self.parse)
 
     def parse_acta(self, response):
-        actes = response.xpath('//*[@class="col-md-12 bg-white mb-20"]')
-        blocs = response.xpath('//*[@class="col-md-4 p-0_ml"]//table')
+        jugadors_page_links = response.css('table.acta-table a')
+        yield from response.follow_all(jugadors_page_links, self.parse_jugador)
+    
+    def parse_jugador(self, response):
 
-        #item = Equip()
-        #item['nom'] = blocs.xpath('//th/text()').extract()
-        #yield item
         item = Jugador()
-        item['nom'] = actes.xpath('//*[@class="col-md-12 bg-white mb-20"]//table//tbody//tr//td//a/text()').extract()
+        item['nom'] = response.xpath('//*[@class="m-0 fs-30 va-b bold"]/text()').extract()
+        item['equip'] = response.xpath('//*[@class="mt-5 fs-20 va-t darkgrey italic"]/text()').extract()
         yield item
-        #for acta in actes:
-        #    if response.xpath('//*[@class="col-md-4 p-0_ml"]//table//th/text()').extract() == 'Titulars':
-        #        item = Jugador()
-        #        item['nom'] = acta.xpath('//*[@class="col-md-12 bg-white mb-20"]//table//tbody//tr//td//a/text()').extract()
-        #        yield item
