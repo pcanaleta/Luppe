@@ -21,10 +21,7 @@ class LuppebotPipeline(object):
         self.collection = db['actes']
     
     def process_item(self, item, spider):
-
-        #if self.collection.find_one({"nom": item['nom']}):
-        #    logging.warning("EXISTEIX!!!!!!!")
-        #else:
+        #Como saber si tiene nombre de jugador y nombre de equipo
+        #{nom: {$exists:true, $not: {$size:1}}} 
         self.collection.insert_one(dict(item))
-        
         return item
