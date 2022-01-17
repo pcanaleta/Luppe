@@ -23,6 +23,8 @@ class TaulaGolsItem(scrapy.Item):
     pass
 
 class Jugador(scrapy.Item):
+    id = scrapy.Field()
+    categoria = scrapy.Field()
     numero = scrapy.Field()
     nom = scrapy.Field()
     cognom = scrapy.Field()

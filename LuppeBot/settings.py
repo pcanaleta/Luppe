@@ -65,11 +65,8 @@ ROBOTSTXT_OBEY = True
 ITEM_PIPELINES = {
     'LuppeBot.pipelines.LuppebotPipeline': 300,
 }
-
-MONGODB_SERVER = "cluster0-shard-00-01.2kn4u.mongodb.net"
-MONGODB_PORT = "27017"
-MONGODB_DB = "luppe"
-MONGODB_COLLECTION = "actes"
+MONGO_URI = "mongodb://localhost:27017"
+MONGO_DATABASE = "luppe"
 
 #"mongodb+srv://admin:<password>@cluster0.2kn4u.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 # Enable and configure the AutoThrottle extension (disabled by default)

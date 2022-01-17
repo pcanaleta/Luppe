@@ -11,25 +11,46 @@ import logging
 import pymongo
 
 class LuppebotPipeline(object):
-    def __init__(self):
-        self.connection = pymongo.MongoClient(
-            'localhost',
-            27017
+
+    #collection_name = 'actes'
+    spider = None
+
+    def __init__(self, mongo_uri, mongo_db):
+        self.mongo_uri = mongo_uri
+        self.mongo_db = mongo_db
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            mongo_uri=crawler.settings.get('MONGO_URI'),
+            mongo_db=crawler.settings.get('MONGO_DATABASE')
         )
-        db = self.connection['fcf']
-        self.collection = db['actes']
+
+    def open_spider(self, spider):
+        self.client = pymongo.MongoClient(self.mongo_uri)
+        self.db = self.client[self.mongo_db]
+    
+    def close_spider(self, spider):
+        self.client.close()
     
     def process_item(self, item, spider):
         #Como saber si tiene nombre de jugador y nombre de equipo
         #{nom: {$exists:true, $not: {$size:1}}}
         #{$and: [ { nom: null},{equip:null}]}
+        self.spider = spider
+        query_es_null = {"$and":[{"nom": "null"}, {"equip": "null"}]}
         query_existeix_jugador = {"nom": dict(item)['nom']}
-        query_es_null = {"$and":[{"nom": "null"},{"equip":"null"}]}
-        if self.collection.count_documents(query_existeix_jugador) > 0:
-            pass
-        else:
-            if item['equip'] is None:
-                pass
-            else:
-                self.collection.insert_one(dict(item))
+        query_mateixa_categoria = {"categoria": item['categoria']}
+        list_of_collections = self.db.list_collection_names()
+        #if self.db[item['categoria']].count_documents(query_existeix_jugador) > 0:
+        #else:
+        if not (item['equip'] == None):
+            self.db[item['categoria']].update_one(
+                {"id": item['id']},
+                {"$set": dict(item)},
+                upsert=True
+            )                         
+            return item
         
+          
+#
