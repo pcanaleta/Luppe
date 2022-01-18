@@ -6,6 +6,7 @@ from itemadapter import ItemAdapter
 from scrapy.exporters import XmlItemExporter
 from scrapy.linkextractors import LinkExtractor
 from LuppeBot.items import Jugador, Equip
+import os
 
 # scrapy crawl --nolog --output -:json gols
 # scrapy crawl gols -o Gols.csv
@@ -13,18 +14,28 @@ from LuppeBot.items import Jugador, Equip
 
 class ResidentialRecordsSpider(scrapy.Spider):
     name = 'actes'
-    collection_name='4 catalana'
-    start_urls = [l.strip() for l in open('listofurls.txt').readlines()]
-    #start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/tercera-catalana/grup-1/jornada-12']
+    if not os.path.isdir('/log.txt'):
+        start_urls = [l.strip() for l in open('log.txt').readlines()]
+    else:
+        print("NO EXISTEIX EL FITXER")
+    #start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/primera-catalana/grup-1/jornada-1']
     
-
+    #metodo para conseguir sacar la información de todas las categorias
     def parse(self, response):
-        actes_page_links = response.css('td.p-5.resultats-w-resultat.tc a')
-        categoria = "as"
-        yield from response.follow_all(actes_page_links, self.parse_acta, meta={'categoria': categoria})
+        link_competicio = response.xpath('//*[@id="select_competi"]/option/@value').getall()
+        yield from response.follow_all(link_competicio, self.parse_link_grups)
 
-        #pagination_links = response.css('li.next a')
-        #yield from response.follow_all(pagination_links, self.parse)
+        actes_page_links = response.css('td.p-5.resultats-w-resultat.tc a')
+        yield from response.follow_all(actes_page_links, self.parse_acta)
+
+    def parse_link_grups(self, response):
+        link_grupo = response.xpath('//*[@id="select_grupo"]/option/@value').getall()
+        link_jornada = response.xpath('//*[@id="select_jornada"]/option/@value').getall()
+        if not os.path.isdir('./log.txt'):
+            with open('log.txt','a') as f:
+                for grupo in link_grupo:
+                    for jornada in link_jornada:
+                        f.write(grupo+jornada + "\n")
 
     def parse_acta(self, response):
         jugadors_page_links = response.css('table.acta-table a')
@@ -48,7 +59,4 @@ class ResidentialRecordsSpider(scrapy.Spider):
             item['targetes_grogues'] = response.css('div.groga-s div::text').extract_first()
             item['targetes_vermelles'] = response.css('div.vermella-s div::text').extract_first()
             item['targetes_dobles_grogues'] = response.css('div.groga-vermella-s div.comptador::text').extract_first()
-        #item['categoria'] = response.request.url
             yield item
-        else:
-            pass
