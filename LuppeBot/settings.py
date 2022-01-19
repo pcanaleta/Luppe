@@ -27,7 +27,7 @@ ROBOTSTXT_OBEY = True
 # See also autothrottle settings and docs
 #DOWNLOAD_DELAY = 3
 # The download delay setting will honor only one of:
-CONCURRENT_REQUESTS_PER_DOMAIN = 50
+CONCURRENT_REQUESTS_PER_DOMAIN = 20
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
@@ -65,7 +65,10 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 50
 ITEM_PIPELINES = {
     'LuppeBot.pipelines.LuppebotPipeline': 300,
 }
-MONGO_URI = "mongodb://localhost:27017"
+with open('config.txt') as f:
+    lines = f.readlines()
+    for line in lines:
+        MONGO_URI = line
 MONGO_DATABASE = "luppe"
 
 #"mongodb+srv://admin:<password>@cluster0.2kn4u.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"

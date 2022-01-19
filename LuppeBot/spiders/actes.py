@@ -1,11 +1,7 @@
 from gc import collect
 import logging
-from fsspec import Callback
 import scrapy
-from itemadapter import ItemAdapter
-from scrapy.exporters import XmlItemExporter
-from scrapy.linkextractors import LinkExtractor
-from LuppeBot.items import Jugador, Equip
+from LuppeBot.items import Jugador
 import os
 
 # scrapy crawl --nolog --output -:json gols
@@ -16,8 +12,8 @@ class ResidentialRecordsSpider(scrapy.Spider):
     
     name = 'actes'
 
-    start_urls = [l.strip() for l in open('urls_fcf.txt').readlines()]
-    #start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/quarta-catalana/grup-1/jornada-1']
+    #start_urls = [l.strip() for l in open('urls_fcf.txt').readlines()]
+    start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/quarta-catalana/grup-1/jornada-1']
     
     #Metodo para conseguir sacar la información de todas las categorias
     def parse(self, response):
