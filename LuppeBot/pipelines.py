@@ -35,10 +35,6 @@ class LuppebotPipeline(object):
     
     def process_item(self, item, spider):
         self.spider = spider
-        query_es_null = {"$and":[{"nom": "null"}, {"equip": "null"}]}
-        query_existeix_jugador = {"nom": dict(item)['nom']}
-        query_mateixa_categoria = {"categoria": item['categoria']}
-        list_of_collections = self.db.list_collection_names()
         if not (item['equip'] == None):
             self.db[item['categoria']].update_one(
                 {"id": item['id']},

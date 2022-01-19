@@ -13,40 +13,26 @@ import os
 # scrapy crawl gols -o Gols.json
 
 class ResidentialRecordsSpider(scrapy.Spider):
-    name = 'actes'
-    if not os.path.isdir('/log.txt'):
-        start_urls = [l.strip() for l in open('log.txt').readlines()]
-    else:
-        print("NO EXISTEIX EL FITXER")
-    #start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/primera-catalana/grup-1/jornada-1']
     
-    #metodo para conseguir sacar la información de todas las categorias
-    def parse(self, response):
-        link_competicio = response.xpath('//*[@id="select_competi"]/option/@value').getall()
-        yield from response.follow_all(link_competicio, self.parse_link_grups)
+    name = 'actes'
 
-        actes_page_links = response.css('td.p-5.resultats-w-resultat.tc a')
+    start_urls = [l.strip() for l in open('urls_fcf.txt').readlines()]
+    #start_urls = ['https://www.fcf.cat/resultats/2022/futbol-11/quarta-catalana/grup-1/jornada-1']
+    
+    #Metodo para conseguir sacar la información de todas las categorias
+    def parse(self, response):
+        actes_page_links = response.xpath('//tr[@class="linia"][contains(.," - ")]//td[@class="p-5 resultats-w-resultat tc"]//a')
         yield from response.follow_all(actes_page_links, self.parse_acta)
 
-    def parse_link_grups(self, response):
-        link_grupo = response.xpath('//*[@id="select_grupo"]/option/@value').getall()
-        link_jornada = response.xpath('//*[@id="select_jornada"]/option/@value').getall()
-        if not os.path.isdir('./log.txt'):
-            with open('log.txt','a') as f:
-                for grupo in link_grupo:
-                    for jornada in link_jornada:
-                        f.write(grupo+jornada + "\n")
-
     def parse_acta(self, response):
-        jugadors_page_links = response.css('table.acta-table a')
-        yield from response.follow_all(jugadors_page_links, self.parse_jugador, meta={'categoria': response.meta.get('categoria')})
+        jugadors_page_links = response.xpath('//table[@class="acta-table"][contains(.,"Titulars") or contains(.,"Suplents")]//a')
+        yield from response.follow_all(jugadors_page_links, self.parse_jugador)
     
     def parse_jugador(self, response):
-
         item = Jugador()
         if len((response.url).split('/')) > 6:
             item['id'] = response.url.split('/')[8] + "_" + response.url.split('/')[9]
-            item['categoria'] = response.url.split('/')[6] + "_" + response.url.split('/')[7]
+            item['categoria'] = response.url.split('/')[6] + "_" + response.url.split('/')[7] + "_" + response.url.split('/')[4]
             item['nom'] = response.xpath('//*[@class="m-0 fs-30 va-b bold"]/text()').extract_first()
             item['equip'] = response.xpath('//*[@class="mt-5 fs-20 va-t darkgrey italic"]/text()').extract_first()
             item['jornades_lliga'] = response.xpath('//*[@class="axis"]//div/text()').extract_first()
